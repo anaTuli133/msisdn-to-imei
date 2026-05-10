@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IMEI Triplet Explorer</title>
+    <style>
+        /* General Page Styling */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background: #f4f7f6;
+            color: #333;
+        }
+
+        /* Sticky Header for search controls */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header h2 {
+            margin: 0;
+            color: #2c3e50;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        input[type="text"] {
+            padding: 10px 15px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            width: 280px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #2c3e50;
+        }
+
+        /* Button Variations */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+            font-size: 14px;
+        }
+
+        .btn-search {
+            background-color: #2c3e50;
+            color: white;
+        }
+
+        .btn-search:hover {
+            background-color: #34495e;
+        }
+
+        .btn-close {
+            background-color: #0cb823;
+            color: white;
+        }
+
+        .btn-close:hover {
+            background-color: #2bc076;
+        }
+
+        /* Table and Wrapper Styling */
+        .table-wrapper {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            max-height: 75vh;
+            overflow-y: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background: #2c3e50;
+            color: white;
+            padding: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        /* Row Highlighting Logic Styles */
+        .highlight-row {
+            background-color: #fff3cd !important;
+            border-left: 5px solid #ffc107;
+            font-weight: 600;
+            transition: background-color 0.5s ease;
+        }
+
+        /* Optimized Custom Scrollbar */
+        .table-wrapper::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .table-wrapper::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .table-wrapper::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <h2>IMEI → View Table</h2>
+
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search MSISDN or IMEI..."
+                value="{{ search_query if search_query else '' }}"> <button type="button" onclick="smartSearch()"
+                class="btn btn-search">SEARCH</button>
+
+            {% if search_query %}
+            <button onclick="window.location.href='/api/view-table'"
+                style="background:none; border:none; color:#3498db; cursor:pointer; text-decoration:underline;">
+                Clear Filter
+            </button>
+            {% endif %}
+        </div>
+
+        <button onclick="window.close()" class="btn btn-close">Close Window</button>
+    </div>
+
+    <div class="table-wrapper">
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    {% for col in cols %}
+                    <th>{{ col }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                <tr>
+                    {% for val in row %}
+                    <td class="cell-data">{{ val }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <script>
+        /**
+         * Executes a smart search strategy:
+         * 1. Attempts to find and jump to the number in the current DOM (Local Search).
+         * 2. If not found, triggers a server-side database query (Global Search).
+         */
+        /**
+      * Executes a smart search strategy:
+      * 1. Checks the currently loaded 500 records in the browser (Local Search).
+      * 2. If not found, triggers a server-side query to search the full 7.2M database (Global Search).
+      */
+
+        function smartSearch() {
+            const searchTerm = document.getElementById('searchInput').value.trim();
+            if (!searchTerm) return;
+
+            const cells = document.querySelectorAll('.cell-data');
+            let foundLocally = false;
+
+            for (let cell of cells) {
+                if (cell.innerText.trim() === searchTerm) {
+
+                    document.querySelectorAll('.highlight-row').forEach(r => r.classList.remove('highlight-row'));
+                    cell.parentElement.classList.add('highlight-row');
+                    cell.parentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    foundLocally = true;
+                    break;
+                }
+            }
+
+            if (!foundLocally) {
+                window.location.href = `/api/view-table?search=${encodeURIComponent(searchTerm)}`;
+            }
+        }
+
+
+        /**
+         * On Page Load: Checks for a 'search' parameter in the URL.
+         * If present, it waits for the table to render and highlights the result.
+         */
+        window.onload = function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const searchQuery = urlParams.get('search');
+
+            if (searchQuery) {
+                document.getElementById('searchInput').value = searchQuery;
+
+                setTimeout(() => {
+                    const rows = document.querySelectorAll('tbody tr');
+                    let highlighted = false;
+
+                    for (let row of rows) {
+                        const rowText = row.innerText.replace(/\s+/g, '');
+                        const cleanQuery = searchQuery.replace(/\s+/g, '').trim();
+
+                        if (rowText.includes(cleanQuery)) {
+                            row.classList.add('highlight-row');
+                            if (!highlighted) {
+                                row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                highlighted = true;
+                            }
+                        }
+                    }
+
+                    if (!highlighted) {
+                        console.log("Still not found in DOM");
+                    }
+                }, 300);
+            }
+        };
+
+
+        // Accessibility: Allows users to trigger search by pressing the 'Enter' key
+        document.getElementById('searchInput').addEventListener("keypress", function (e) {
+            if (e.key === "Enter") smartSearch();
+        });
+
+        function closeCurrentWindow() {
+
+            window.close();
+            if (!window.closed) {
+                window.opener = null;
+                window.open("", "_self");
+                window.close();
+            }
+        }
+    </script>
+
+</body>
+
+</html>

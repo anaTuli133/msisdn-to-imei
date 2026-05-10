@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MSISDN to IMEI | Teletalk</title>
+    <link rel="shortcut icon" href="/static/teletalk.png" type="image/x-icon">
+    <style>
+        :root {
+            --primary: #71bd44;
+            --primary-dark: #5fae3a;
+            --bg: #f0f2f5;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: #333;
+        }
+
+        /* Top navbar */
+        .navbar {
+            background: white;
+            border-bottom: 2px solid var(--primary);
+            padding: 12px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .navbar-left img {
+            width: 40px;
+        }
+
+        .navbar-left h1 {
+            font-size: 18px;
+            color: #2e7d32;
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-badge {
+            background: #e8f5e9;
+            border: 1px solid #a5d6a7;
+            color: #2e7d32;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .btn-logout {
+            background: none;
+            border: 1.5px solid #ccc;
+            color: #666;
+            padding: 6px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: 0.2s;
+        }
+
+        .btn-logout:hover {
+            border-color: #e53935;
+            color: #e53935;
+        }
+
+        .btn-docs {
+            border-color: #71bd44;
+            color: #71bd44;
+        }
+
+        /* Main content */
+        .main-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 16px;
+        }
+
+        .container {
+            background: white;
+            width: 100%;
+            max-width: 520px;
+            padding: 32px;
+            border-radius: 14px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .container h2 {
+            font-size: 20px;
+            color: #2e7d32;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e8f5e9;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 6px;
+        }
+
+        input[type="number"],
+        input[type="date"] {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1.5px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus { border-color: var(--primary); }
+
+        /*.date-row {
+            display: flex;
+            gap: 14px;
+        }
+
+        .date-row .form-group { flex: 1; }
+        */
+        .file-upload-label {
+            display: block;
+            background: #f8f9fa;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 14px;
+            text-align: center;
+            cursor: pointer;
+            color: #777;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .file-upload-label:hover { border-color: var(--primary); color: var(--primary); }
+        #msisdn_batch_file { display: none; }
+
+        .btn-submit {
+            width: 100%;
+            padding: 13px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 6px;
+        }
+
+        .btn-submit:hover { background: var(--primary-dark); }
+
+        /* Results */
+        .result-area {
+            width: 100%;
+            max-width: 1400px;
+            margin-top: 24px;
+        }
+
+        .result-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            display: none;
+        }
+
+        .result-count {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .btn-download {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 9px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .btn-download:hover { background: var(--primary-dark); }
+
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            overflow-x: auto;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+        }
+
+        table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        th { background: var(--primary); color: white; padding: 14px 16px; text-align: left; font-size: 13px; }
+        td { padding: 12px 16px; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #f9fbe7; }
+
+        .status-msg {
+            text-align: center;
+            padding: 30px;
+            color: #888;
+            font-size: 15px;
+        }
+
+        .top-bar {
+            width: 100%;
+            display: flex;
+            justify-content: center; /* pushes button to right */
+            margin-top: 15px;
+            margin-bottom: -20px;
+        }
+
+        .view-table-btn {
+            background-color: #71bd44;
+            color: white;
+            padding: 12px 22px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .view-table-btn:hover {
+            background-color: #5fae3a;
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+    <div class="navbar-left">
+        <img src="/static/teletalk.png" alt="Logo" onerror="this.style.display='none'">
+        <h1>MSISDN to IMEI API</h1>
+    </div>
+    <div class="navbar-right">
+        <span class="user-badge" id="user-display">👤 Loading...</span>
+        <button class="btn-logout" onclick="logout()">Sign Out</button>
+
+<a href="/docs" target="_blank">
+    <button class="btn-logout btn-docs">
+        📋 API Docs
+    </button>
+</a>
+    <a href="/api/view-table" target="_blank" class="view-table-btn">
+    View Table
+</a>
+    </div>
+</div>
+
+<!-- Main content -->
+<div class="main-wrapper">
+    <div class="container">
+        <h2>🔍 Search MSISDN</h2>
+
+        <div class="form-group">
+            <label>Enter MSISDN</label>
+            <input type="number" id="MSISDN" placeholder="e.g. 88015..." autocomplete="off">
+        </div>
+
+        <div class="form-group">
+            <label>Or Upload Batch File (.txt)</label>
+            <label for="msisdn_batch_file" class="file-upload-label" id="file-label">
+                📁 Click to upload .txt file
+            </label>
+            <input type="file" id="msisdn_batch_file" accept=".txt" onchange="toggleMsisdnField()">
+        </div>
+<!--Date
+        <div class="date-row">
+            <div class="form-group">
+                <label>Start Date</label>
+                <input type="date" id="start" title="Select start date" required>
+            </div>
+            <div class="form-group">
+                <label>End Date</label>
+                <input type="date" id="end" title="Select end date" required>
+            </div>
+        </div>
+-->
+        <button class="btn-submit" onclick="submitForm()">Search</button>
+    </div>
+
+    <!-- Result toolbar -->
+    <div class="result-area">
+        <div class="result-toolbar" id="result-toolbar">
+            <span class="result-count" id="result-count"></span>
+            <button class="btn-download" onclick="downloadCSV()">⬇ Download CSV</button>
+        </div>
+        <div class="table-container" id="result"></div>
+    </div>
+</div>
+
+<script>
+let currentData = [];
+let authHeader = '';
+
+// On page load — check login
+window.onload = function() {
+    const auth = sessionStorage.getItem('auth');
+    const username = sessionStorage.getItem('username');
+
+    if (!auth) {
+        window.location.href = '/';
+        return;
+    }
+
+    authHeader = 'Basic ' + auth;
+    document.getElementById('user-display').textContent = '👤 ' + username;
+};
+
+function logout() {
+    sessionStorage.clear();
+    window.location.href = '/';
+}
+
+async function submitForm() {
+    const msisdn = document.getElementById('MSISDN').value;
+    //const start_date = document.getElementById('start').value;
+    //const end_date = document.getElementById('end').value;
+    const resultDiv = document.getElementById('result');
+    const toolbar = document.getElementById('result-toolbar');
+
+    //if (!start_date || !end_date) {
+    //    alert('Please select start and end date.');
+    //   return;
+    //}
+
+    let msisdnList = [];
+
+    // Check batch file
+    const fileInput = document.getElementById('msisdn_batch_file');
+    if (fileInput.files.length > 0) {
+        const text = await fileInput.files[0].text();
+        msisdnList = text.split('\n').map(s => s.trim()).filter(s => s);
+    } else if (msisdn) {
+        msisdnList = [msisdn];
+    } else {
+        alert('Please enter an MSISDN or upload a batch file.');
+        return;
+    }
+
+    resultDiv.innerHTML = "<div class='status-msg'>🔄 Searching...</div>";
+    toolbar.style.display = 'none';
+
+    try {
+        const response = await fetch('/api/msisdn-to-imei', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': authHeader
+            },
+            body: JSON.stringify({ msisdn: msisdnList}) //, start_date, end_date 
+        });
+
+        if (response.status === 401) {
+            sessionStorage.clear();
+            window.location.href = '/';
+            return;
+        }
+
+        const data = await response.json();
+        currentData = data.data || [];
+
+        if (currentData.length === 0) {
+            resultDiv.innerHTML = "<div class='status-msg'>No records found.</div>";
+            return;
+        }
+
+        // Show toolbar
+        toolbar.style.display = 'flex';
+        document.getElementById('result-count').textContent = `Total: ${currentData.length} records`;
+
+        // Build table
+        let html = '<table><thead><tr>';
+        Object.keys(currentData[0]).forEach(key => html += `<th>${key}</th>`);
+        html += '</tr></thead><tbody>';
+        currentData.forEach(row => {
+            html += '<tr>';
+            Object.values(row).forEach(val => html += `<td>${val ?? ''}</td>`);
+            html += '</tr>';
+        });
+        html += '</tbody></table>';
+        resultDiv.innerHTML = html;
+
+    } catch (err) {
+        resultDiv.innerHTML = "<div class='status-msg' style='color:red;'>❌ Error connecting to server.</div>";
+    }
+}
+
+function downloadCSV() {
+    if (!currentData.length) return;
+    const msisdn = document.getElementById('MSISDN').value || 'batch';
+    //const start = document.getElementById('start').value;
+    //const end = document.getElementById('end').value;
+    const headers = Object.keys(currentData[0]).join(',');
+    const rows = currentData.map(r => Object.values(r).join(','));
+    const csv = 'data:text/csv;charset=utf-8,' + [headers, ...rows].join('\n');
+    const link = document.createElement('a');
+    link.setAttribute('href', encodeURI(csv));
+    link.setAttribute('download', `${msisdn}.csv`); //_${start}_${end}
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+function toggleMsisdnField() {
+    const msisdnField = document.getElementById('MSISDN');
+    const fileInput = document.getElementById('msisdn_batch_file');
+    const fileLabel = document.getElementById('file-label');
+    if (fileInput.files.length > 0) {
+        msisdnField.disabled = true;
+        msisdnField.style.background = '#eee';
+        fileLabel.innerHTML = `✅ ${fileInput.files[0].name}`;
+    } else {
+        msisdnField.disabled = false;
+        msisdnField.style.background = 'white';
+        fileLabel.innerHTML = '📁 Click to upload .txt file';
+    }
+}
+</script>
+</body>
+</html>

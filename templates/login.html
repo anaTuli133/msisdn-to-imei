@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Teletalk MSISDN API</title>
+    <link rel="shortcut icon" href="/static/teletalk.png" type="image/x-icon">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 50%, #a5d6a7 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-wrapper {
+            width: 100%;
+            max-width: 420px;
+            padding: 20px;
+        }
+
+        .logo-area {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-area img {
+            width: 80px;
+            margin-bottom: 12px;
+        }
+
+        .logo-area h1 {
+            font-size: 22px;
+            color: #2e7d32;
+            font-weight: 700;
+        }
+
+        .logo-area p {
+            font-size: 13px;
+            color: #555;
+            margin-top: 4px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 36px 32px;
+            box-shadow: 0 8px 32px rgba(46, 125, 50, 0.15);
+        }
+
+        .card h2 {
+            font-size: 20px;
+            color: #1b5e20;
+            margin-bottom: 6px;
+        }
+
+        .card .subtitle {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #444;
+            margin-bottom: 6px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s;
+            color: #333;
+        }
+
+        input:focus {
+            border-color: #71bd44;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 13px;
+            background-color: #71bd44;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 8px;
+        }
+
+        .btn-login:hover {
+            background-color: #5fae3a;
+        }
+
+        .btn-login:disabled {
+            background-color: #aaa;
+            cursor: not-allowed;
+        }
+
+        .error-msg {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ef9a9a;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .footer-text {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 12px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+<div class="login-wrapper">
+    <div class="logo-area">
+        <img src="/static/teletalk.png" alt="Teletalk Logo" onerror="this.style.display='none'">
+        <h1>Teletalk Bangladesh</h1>
+        <p>MSISDN to IMEI API Portal</p>
+    </div>
+
+    <div class="card">
+        <h2>Sign In</h2>
+        <p class="subtitle">Enter your credentials to access the API</p>
+
+        <div class="error-msg" id="error-msg">❌ Invalid username or password.</div>
+
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" placeholder="Enter your username" autocomplete="username">
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password">
+        </div>
+
+        <button class="btn-login" id="login-btn" onclick="doLogin()">Sign In</button>
+
+        <div class="footer-text">Authorized access only &bull; Teletalk Bangladesh Ltd.</div>
+    </div>
+</div>
+
+<script>
+    // Enter key support
+    document.getElementById('password').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') doLogin();
+    });
+    document.getElementById('username').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') doLogin();
+    });
+
+    async function doLogin() {
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value.trim();
+        const errorMsg = document.getElementById('error-msg');
+        const btn = document.getElementById('login-btn');
+
+        if (!username || !password) {
+            errorMsg.textContent = '❌ Please enter username and password.';
+            errorMsg.style.display = 'block';
+            return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = 'Signing in...';
+        errorMsg.style.display = 'none';
+
+        try {
+            // Test credentials by calling the API with Basic Auth
+            const response = await fetch('/api/msisdn-to-imei', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Basic ' + btoa(username + ':' + password)
+                },
+                body: JSON.stringify({
+                    msisdn: ['test'],
+                    start_date: '2026-01-01',
+                    end_date: '2026-01-01'
+                })
+            });
+
+            if (response.status === 401) {
+                errorMsg.textContent = '❌ Invalid username or password.';
+                errorMsg.style.display = 'block';
+                btn.disabled = false;
+                btn.textContent = 'Sign In';
+                return;
+            }
+
+            // Success — save credentials in session and go to dashboard
+            sessionStorage.setItem('auth', btoa(username + ':' + password));
+            sessionStorage.setItem('username', username);
+            window.location.href = '/dashboard';
+
+        } catch (err) {
+            errorMsg.textContent = '❌ Connection error. Please try again.';
+            errorMsg.style.display = 'block';
+            btn.disabled = false;
+            btn.textContent = 'Sign In';
+        }
+    }
+</script>
+</body>
+</html>

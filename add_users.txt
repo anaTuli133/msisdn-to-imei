@@ -1,0 +1,13 @@
+Usage:
+    python manage_users.py add <username> <password>
+    python manage_users.py list
+    python manage_users.py deactivate <username>
+
+Examples:
+    python manage_users.py add police 123 
+    python manage_users.py add rahi 5096
+    python manage_users.py add asibul teletalk
+    python manage_users.py add anamika 1622 
+
+
+    ## uvicorn main:app --reload --host 192.168.8.140 --port 8000
