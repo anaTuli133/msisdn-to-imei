@@ -44,56 +44,6 @@ The MSISDN to IMEI API provides authorized third-party access to Teletalk's comp
 
 ---
 
-## 🚀 Quick Start
-
-### Prerequisites
-
-```bash
-# Verify Python installation
-python3 --version  # Should be 3.8+
-
-# Verify Oracle client
-sqlplus -v  # Should show Oracle Instant Client 19c+
-```
-
-### Installation Steps
-
-```bash
-# 1. Clone repository
-git clone https://github.com/teletalk/msisdn-imei-api.git
-cd msisdn-imei-api
-
-# 2. Create virtual environment
-python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# 3. Install dependencies
-pip install -r requirements.txt
-
-# 4. Configure environment
-cp .env.example .env
-nano .env  # Edit configuration (see Configuration section)
-
-# 5. Initialize database
-python manage_users.py add admin admin123
-python manage_users.py list
-
-# 6. Start server
-python run.py
-```
-
-### Verify Installation
-
-```bash
-# Server should respond with API documentation
-curl http://127.0.0.1:9000/docs
-
-# Should show login page
-curl http://127.0.0.1:9000/
-```
-
----
-
 ## ⚙️ Configuration
 
 ### Environment Variables (.env)
