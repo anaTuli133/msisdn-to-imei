@@ -112,11 +112,11 @@ Convert MSISDN numbers to IMEI values.
 
 **Request:**
 ```bash
-curl -X POST http://192.168.8.140:8000/api/msisdn-to-imei \
+curl -X POST http://192.168.61.254:9000/api/msisdn-to-imei \
   -H "Content-Type: application/json" \
   -u username:password \
   -d '{
-    "msisdn": ["8801550155096"]
+    "msisdn": ["88015XXXXXXXX"]
   }'
 ```
 
@@ -128,7 +128,7 @@ curl -X POST http://192.168.8.140:8000/api/msisdn-to-imei \
   "count": 1,
   "data": [
     {
-      "IMEI": "357207092373460"
+      "IMEI": "35XXXXXXXXXXXXX"
     }
   ]
 }
@@ -138,7 +138,7 @@ curl -X POST http://192.168.8.140:8000/api/msisdn-to-imei \
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| msisdn | Array[String] | Yes | MSISDN numbers (Format: 88017XXXXXXXX) |
+| msisdn | Array[String] | Yes | MSISDN numbers (Format: 88015XXXXXXXX) |
 | start_date | String | No | Start date (Format: YYYY-MM-DD) |
 | end_date | String | No | End date (Format: YYYY-MM-DD) |
 
@@ -155,8 +155,8 @@ All requests require HTTP Basic Authentication (RFC 7617):
 Authorization: Basic base64(username:password)
 
 # Example
-Username: rahi
-Password: 5096
+Username: ****
+Password: ****
 Authorization: Basic cmFoaTo1MDk2
 ```
 
@@ -178,7 +178,7 @@ Authorization: Basic cmFoaTo1MDk2
 2. Enter username and password
 3. Click "Sign In"
 
-![Sign In](./images/sign in.png)
+![Sign In](./images/signin.png)
 
 **Features:**
 - Single MSISDN lookup
@@ -240,7 +240,7 @@ User Interface
 ---
 ## 🛠️ Testing
 
-![Using Swagger UI](./images/Swagger UI.png)
+![Using Swagger UI](./images/SwaggerUI.png)
 ![Using Swagger UI](./images/post-method.png)
 
 ## 📚 API Documentation
