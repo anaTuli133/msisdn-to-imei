@@ -210,7 +210,7 @@ Authorization: Basic cmFoaTo1MDk2
 3. Enter MSISDN/IMEI in search box to find specific records
 4. Results show all historical associations
 
-![Searcdh MSISDN](./images/view-table search.png)
+![Searcdh MSISDN](./images/view-table-search.png)
 
 
 ---
