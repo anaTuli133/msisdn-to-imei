@@ -290,7 +290,7 @@ echo $response;
 
 **JavaScript/Node.js**
 ```javascript
-const auth = btoa("rahi:5096");
+const auth = btoa("****:****");
 
 fetch("http://192.168.61.254:9000/api/msisdn-to-imei", {
     method: "POST",
@@ -298,7 +298,7 @@ fetch("http://192.168.61.254:9000/api/msisdn-to-imei", {
         "Authorization": `Basic ${auth}`,
         "Content-Type": "application/json"
     },
-    body: JSON.stringify({msisdn: ["8801550155096"]})
+    body: JSON.stringify({msisdn: ["88015XXXXXXXX"]})
 })
 .then(r => r.json())
 .then(data => console.log(data));
