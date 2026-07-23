@@ -486,32 +486,7 @@ sqlplus dwh_user@192.168.61.16:1521/datadb01
 
 This project is proprietary software of Teletalk Bangladesh Limited. All rights reserved.
 
-**Unauthorized access, copying, or distribution is prohibited.**
-
-
-
-
-## 📋 Checklist for Deployment
-
-- [ ] Environment variables configured
-- [ ] Database connectivity verified
-- [ ] User accounts created
-- [ ] SSL certificates installed (production)
-- [ ] Firewall rules configured
-- [ ] Log rotation setup
-- [ ] Backup strategy implemented
-- [ ] Monitoring alerts configured
-- [ ] Documentation updated
-- [ ] Training completed
-
----
-
-## 🚀 Quick Links
-
-- [API Documentation](http://192.168.61.254:9000/docs)
-- [Interactive Testing](http://192.168.61.254:9000/redoc)
-- [Dashboard](http://192.168.61.254:9000/dashboard)
-- [View Table](http://192.168.61.254:9000/api/view-table)
+**Unauthorized access, copying or distribution is prohibited.**
 
 ---
 
