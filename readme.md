@@ -192,7 +192,7 @@ Authorization: Basic cmFoaTo1MDk2
 
 ### View Table
 
-**Access:** http://192.168.8.140:8000/api/view-table
+**Access:** http://192.168.61.254:9000/api/view-table
 
 **Features:**
 - Browse 7.2 million+ IMEI records
