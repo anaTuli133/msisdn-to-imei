@@ -251,8 +251,8 @@ User Interface
 
 - **Swagger UI:** http://192.168.61.254:9000/docs
 
-![API Docs](./images/api-docs.png)
 ![API Docs](./images/api-docs2.png)
+![API Docs](./images/api-docs.png)
 
 ### Request/Response Examples
 
