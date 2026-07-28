@@ -242,14 +242,17 @@ User Interface
 
 ![Using Swagger UI](./images/SwaggerUI.png)
 ![Using Swagger UI](./images/post-method.png)
-![API Docs](./images/api-docs.png)
-![API Docs](./images/api-docs2.png)
+
+
 
 ## 📚 API Documentation
 
 ### Interactive Documentation
 
 - **Swagger UI:** http://192.168.61.254:9000/docs
+
+![API Docs](./images/api-docs.png)
+![API Docs](./images/api-docs2.png)
 
 ### Request/Response Examples
 
