@@ -201,7 +201,6 @@ Authorization: Basic cmFoaTo1MDk2
 - View historical MSISDN-IMEI associations
 - Interactive table with sorting
 
-![Searcdh MSISDN](./images/viewtable.png)
 
 
 **Usage:**
@@ -210,7 +209,6 @@ Authorization: Basic cmFoaTo1MDk2
 3. Enter MSISDN/IMEI in search box to find specific records
 4. Results show all historical associations
 
-![Searcdh MSISDN](./images/view-table-search.png)
 
 
 ---
@@ -262,7 +260,7 @@ import requests
 from base64 import b64encode
 
 url = "http://192.168.61.254:9000/api/msisdn-to-imei"
-credentials = b64encode(b"rahi:5096").decode()
+credentials = b64encode(b"").decode()
 
 response = requests.post(
     url,
@@ -481,7 +479,7 @@ sqlplus dwh_user@192.168.61.16:1521/datadb01
 
 | Name | Role |
 |------|------|
-| **Anamika Saha** | Junior Software Engineer (BI Team) | 
+| **Anamika Saha** | BI & Data Platform Engineer | 
 | **Mirza Ahmad Shayer** | BI & Data Platform Engineer | 
 
 ---
